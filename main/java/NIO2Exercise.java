@@ -7,14 +7,15 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class NIO2Exercise 
 {
 	public static Map<String, String> getExpiredTablets(String fileName, String manufacturer) throws IOException
 	{
 		Map<String, String> tabletMap = new HashMap<>();
-		LocalDate date = LocalDate.now();
 		
+		LocalDate date = LocalDate.now();
 		Files.readAllLines(Paths.get(fileName)).stream().forEach(line -> {
 			String[] lineOfData = line.split(",");
 			LocalDate localDate = LocalDate.parse(lineOfData[3], DateTimeFormatter.ofPattern("dd/MM/yyyy"));
@@ -28,11 +29,11 @@ public class NIO2Exercise
 	
 	public static void getCurrentFolderFiles() throws IOException
 	{
-		Files.walk(Paths.get(".")).filter(file -> file.endsWith(".java")).forEach(System.out::println);
+		Files.walk(Paths.get(""), Integer.MAX_VALUE).map(String::valueOf).filter(f -> f.endsWith(".java")).forEach(System.out::println);
 	}
 	
-	public static void fileSearch(String fileName, String abPath) throws IOException
+	public static Optional<String> fileSearch(String fileName, String abPath) throws IOException
 	{
-		Files.walk(Paths.get(abPath)).filter(file -> file.equals(fileName)).findFirst().ifPresent(System.out::println);
+		return Files.walk(Paths.get(abPath), 1).map(String::valueOf).filter(f -> f.endsWith(fileName)).findFirst();
 	}
 }
